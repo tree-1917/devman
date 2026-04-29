@@ -139,7 +139,7 @@ if [ -f ".zshrc" ]; then
     echo -e "${GREEN}Copied local .zshrc configuration.${NC}"
 else
     echo -e "${YELLOW}No local .zshrc found. Download remote repo...${NC}"
-    if curl -fsSL "https://raw.githubusercontent.com/tree-1917/devman/main/zshrc" -o "$HOME/.zshrc" ; then 
+    if curl -fsSL "https://raw.githubusercontent.com/tree-1917/Snama/main/zshrc" -o "$HOME/.zshrc" ; then 
         echo "${GREEN}Remote .zshrc applied successfully.${NC}"        
     else 
         echo "${RED}Failed to download configuration from remote repo...${NC}"
@@ -157,7 +157,7 @@ if [ -f ".zsh_snippets_history" ]; then
     echo -e "${GREEN}Copied provided .zsh_snippets_history configuration.${NC}"
 elif [ ! -f "$ZSH_SNIPPETS_FILE" ]; then
     echo -e "${YELLOW}No local .zsh_snippets_history found. Download remote repo...${NC}"
-    if curl -fsSL "https://raw.githubusercontent.com/tree-1917/devman/main/zsh_snippets_history" -o "$HOME/.zsh_snippets_history" ; then 
+    if curl -fsSL "https://raw.githubusercontent.com/tree-1917/Snama/main/zsh_snippets_history" -o "$HOME/.zsh_snippets_history" ; then 
         echo "${GREEN}Remote .zsh_snippets_history updated current snippets.${NC}"        
     else 
         echo "${RED}Failed to download snippets from remote repo...${NC}"
