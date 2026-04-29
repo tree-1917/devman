@@ -1,74 +1,68 @@
-## README: DevOps Zsh Environment Setup
+## إعداد بيئة Zsh لمهندسي الـ DevOps (devman)
 
-This project provides an automated bash script to configure a productive Zsh environment tailored for DevOps workflows. It streamlines the installation of Zsh, Oh My Zsh, essential plugins, and the Powerlevel10k theme across multiple operating systems.
-
----
-
-### Features
-
-- **Automatic Package Management**: Detects and uses `brew`, `apt`, `pacman`, `dnf`, or `yum` to install dependencies.
-- **Oh My Zsh Integration**: Automates the installation of the Oh My Zsh framework.
-- **Essential Plugins**: Installs `zsh-autosuggestions` and `zsh-syntax-highlighting` automatically.
-- **Theming**: Clones the Powerlevel10k theme for a highly informative terminal prompt.
-- **Configuration Sync**: Downloads verified `.zshrc` and `.zsh_snippets_history` files from a remote repository if local versions are not found.
-- **Safe Backups**: Automatically backs up existing `.zshrc` files to `.zshrc.bak` before making changes.
+ان **devman** هي بيئة Zsh ذكية تم تحسينها لتناسب مهندسي الـ DevOps، مديري الأنظمة، والمحترفين الذين يتعاملون مباشرة مع البنية التحتية
 
 ---
 
-### Prerequisites
-
-The script targets the following operating systems:
-
-- Ubuntu / Debian
-- Arch Linux
-- Fedora / RHEL / CentOS
-- macOS
+### نظرة عامة
+هذا المشروع يوفر سكربت Bash مؤتمت لتهيئة بيئة Zsh إنتاجية متطورة. يقوم السكربت بتبسيط عملية تثبيت Zsh و Oh My Zsh والإضافات الأساسية وقالب Powerlevel10k عبر أنظمة تشغيل متعددة بشكل سريع وآمن.
 
 ---
 
-### Installation
+### المميزات الرئيسية
 
-1.  **Clone the repository or download the script**:
+* **إدارة حزم تلقائية**: يكتشف ويستخدم مدير الحزم المناسب للنظام سواء كان (`brew`, `apt`, `pacman`, `dnf`, أو `yum`).
+* **تكامل Oh My Zsh**: يقوم بأتمتة تثبيت إطار عمل Oh My Zsh دون تدخل يدوي.
+* **الإضافات الأساسية**: يثبت إضافات `zsh-autosuggestions` (الاقتراحات التلقائية) و `zsh-syntax-highlighting` (تمييز الأوامر) لزيادة السرعة والدقة.
+* **تخصيص المظهر**: يجلب قالب **Powerlevel10k** للحصول على واجهة سطر أوامر تفاعلية وغنية بالمعلومات.
+* **مزامنة الإعدادات**: يقوم بتحميل ملفات الإعداد المعتمدة `.zshrc` و `.zsh_snippets_history` من المستودع البعيد (Remote Repository) في حال عدم وجود نسخ محلية.
+* **نسخ احتياطي آمن**: يقوم تلقائياً بعمل نسخة احتياطية للملفات القديمة باسم `.zshrc.bak` قبل إجراء أي تغييرات.
 
-    ```bash
+---
+
+### المتطلبات الأساسية
+يدعم السكربت أنظمة التشغيل التالية:
+* أوبونتو / دبيان (Ubuntu / Debian)
+* آرش لينكس (Arch Linux)
+* فيدورا / RHEL / CentOS
+* ماك (macOS)
+
+---
+
+### خطوات التثبيت
+
+.  **استنساخ المستودع**:
+    ```
     git clone https://github.com/tree-1917/devman.git
-    cd devops
+    cd devman
     ```
 
-2.  **Make the script executable**:
-
-    ```bash
+.  **منح صلاحيات التنفيذ للسكربت**:
+    ```
     chmod +x setup.sh
     ```
 
-3.  **Run the script**:
-    ```bash
+.  **تشغيل السكربت**:
+    ```
     ./setup.sh
     ```
 
 ---
 
-### Post-Installation
+### ما بعد التثبيت
 
-After the script completes successfully, perform the following steps to finalize the environment:
+بعد اكتمال السكربت بنجاح، اتبع الخطوات التالية لتفعيل البيئة الجديدة:
 
-1.  **Switch to Zsh**:
-    If your shell did not change automatically, run:
-
-    ```bash
+.  **الانتقال إلى Zsh**:
+    إذا لم يتغير المشغل تلقائياً، قم بتنفيذ الأمر التالي:
+    ```
     exec zsh
     ```
 
-2.  **Configure the Theme**:
-    The Powerlevel10k configuration wizard should start automatically. If it does not, run:
-    ```bash
+.  **إعداد القالب (Theme)**:
+    سيبدأ معالج إعداد Powerlevel10k تلقائياً. إذا لم يبدأ، يمكنك تشغيله يدوياً عبر:
+    ```
     p10k configure
     ```
 
 ---
-
-### File Structure
-
-- `setup.sh`: The main installation script.
-- `.zshrc`: The shell configuration file (Remote fallback available).
-- `.zsh_snippets_history`: A custom snippets file for command shortcuts (Remote fallback available).
