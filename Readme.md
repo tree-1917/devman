@@ -33,8 +33,7 @@
 
 .  **استنساخ المستودع**:
     ```
-    git clone https://github.com/tree-1917/devman.git
-    cd devman
+    git clone https://github.com/tree-1917/devman.git && cd devman
     ```
 
 .  **منح صلاحيات التنفيذ للسكربت**:
